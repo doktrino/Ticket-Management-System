@@ -4,7 +4,7 @@ import TicketForm from '@/Components/TicketForm';
 
 export default function Edit({ ticket, options }) {
     return (
-        <AuthenticatedLayout header={<h1 className="text-xl font-semibold text-gray-800">Edit Ticket</h1>}>
+        <AuthenticatedLayout header={<h1 className="text-3xl font-extrabold text-pink-700">Edit Ticket</h1>}>
             <Head title="Edit Ticket" />
             <div className="mx-auto max-w-2xl">
                 <TicketForm ticket={ticket} options={options} />

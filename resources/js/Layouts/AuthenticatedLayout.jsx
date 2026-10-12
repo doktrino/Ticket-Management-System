@@ -6,95 +6,102 @@ export default function AuthenticatedLayout({ header, children }) {
     const { auth } = usePage().props;
     const [open, setOpen] = useState(false);
 
-    const navLink = (active) =>
-        `rounded-md px-3 py-2 text-sm font-medium ${
-            active ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-100'
+    const item = (active) =>
+        `flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-bold transition ${
+            active ? 'bg-white text-pink-600 shadow-lg' : 'text-pink-50 hover:bg-white/20'
         }`;
 
-    return (
-        <div className="min-h-screen bg-gray-100">
-            <nav className="border-b border-gray-200 bg-white">
-                <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-                    <div className="flex items-center gap-2">
-                        <Link href={route('dashboard')} className="mr-4 text-lg font-bold text-indigo-600">
-                            HelpDesk
-                        </Link>
-                        <div className="hidden items-center gap-1 md:flex">
-                            <Link href={route('dashboard')} className={navLink(route().current('dashboard'))}>
-                                Dashboard
-                            </Link>
-                            <Link href={route('tickets.index')} className={navLink(route().current('tickets.index'))}>
-                                Tickets
-                            </Link>
-                        </div>
-                    </div>
+    const initial = auth.user.name?.charAt(0).toUpperCase();
 
-                    <div className="hidden items-center gap-3 md:flex">
+    return (
+        <div className="min-h-screen bg-rose-50 md:flex">
+            {/* Desktop sidebar */}
+            <aside className="hidden w-64 shrink-0 flex-col justify-between bg-gradient-to-b from-pink-500 via-pink-500 to-fuchsia-600 p-5 text-white md:sticky md:top-0 md:flex md:h-screen">
+                <div className="space-y-8">
+                    <Link href={route('dashboard')} className="block px-2">
+                        <span className="block text-2xl font-extrabold tracking-tight">HelpDesk</span>
+                        <span className="block text-xs font-semibold text-pink-100">Tickets, tidy and pretty</span>
+                    </Link>
+
+                    <nav className="space-y-2">
+                        <Link href={route('dashboard')} className={item(route().current('dashboard'))}>
+                            <span>◆</span> Dashboard
+                        </Link>
+                        <Link href={route('tickets.index')} className={item(route().current('tickets.index'))}>
+                            <span>☰</span> Tickets
+                        </Link>
                         <Link
                             href={route('tickets.create')}
-                            className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-500"
+                            className="mt-4 flex items-center justify-center gap-2 rounded-2xl bg-white/20 px-4 py-3 text-sm font-extrabold ring-2 ring-white/60 transition hover:bg-white hover:text-pink-600"
                         >
-                            New Ticket
+                            <span>＋</span> New Ticket
                         </Link>
-                        <Link href={route('profile.edit')} className="text-sm font-medium text-gray-700 hover:text-indigo-600">
-                            {auth.user.name}
-                        </Link>
-                        <Link
-                            href={route('logout')}
-                            method="post"
-                            as="button"
-                            className="rounded-md px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100"
-                        >
-                            Logout
-                        </Link>
-                    </div>
-
-                    <button
-                        type="button"
-                        onClick={() => setOpen(!open)}
-                        className="rounded-md p-2 text-gray-600 hover:bg-gray-100 md:hidden"
-                        aria-label="Toggle menu"
-                    >
-                        {open ? '✕' : '☰'}
-                    </button>
+                    </nav>
                 </div>
 
-                {open && (
-                    <div className="space-y-1 border-t border-gray-200 px-4 py-3 md:hidden">
-                        <p className="px-3 pb-2 text-sm font-semibold text-gray-800">{auth.user.name}</p>
-                        <Link href={route('dashboard')} className={`block ${navLink(route().current('dashboard'))}`}>
-                            Dashboard
-                        </Link>
-                        <Link href={route('tickets.index')} className={`block ${navLink(route().current('tickets.index'))}`}>
-                            Tickets
-                        </Link>
-                        <Link
-                            href={route('tickets.create')}
-                            className="block rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white"
+                <div className="rounded-3xl bg-white/15 p-4">
+                    <Link href={route('profile.edit')} className="flex items-center gap-3">
+                        <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-lg font-extrabold text-pink-600">
+                            {initial}
+                        </span>
+                        <span className="min-w-0 truncate text-sm font-bold">{auth.user.name}</span>
+                    </Link>
+                    <Link
+                        href={route('logout')}
+                        method="post"
+                        as="button"
+                        className="mt-3 w-full rounded-xl bg-white/20 px-3 py-2 text-sm font-bold transition hover:bg-white hover:text-pink-600"
+                    >
+                        Logout
+                    </Link>
+                </div>
+            </aside>
+
+            <div className="min-w-0 flex-1">
+                {/* Mobile top bar */}
+                <div className="bg-gradient-to-r from-pink-500 to-fuchsia-500 text-white md:hidden">
+                    <div className="flex h-14 items-center justify-between px-4">
+                        <Link href={route('dashboard')} className="text-lg font-extrabold">HelpDesk</Link>
+                        <button
+                            type="button"
+                            onClick={() => setOpen(!open)}
+                            className="rounded-xl bg-white/20 px-3 py-1.5 text-lg font-bold"
+                            aria-label="Toggle menu"
                         >
-                            New Ticket
-                        </Link>
-                        <Link
-                            href={route('logout')}
-                            method="post"
-                            as="button"
-                            className="block w-full rounded-md px-3 py-2 text-left text-sm font-medium text-gray-600 hover:bg-gray-100"
-                        >
-                            Logout
-                        </Link>
+                            {open ? '✕' : '☰'}
+                        </button>
                     </div>
-                )}
-            </nav>
 
-            {header && (
-                <header className="bg-white shadow">
-                    <div className="mx-auto max-w-6xl px-4 py-4 sm:px-6">{header}</div>
-                </header>
-            )}
+                    {open && (
+                        <div className="space-y-2 px-4 pb-4">
+                            <p className="px-2 text-sm font-extrabold">{auth.user.name}</p>
+                            <Link href={route('dashboard')} className={item(route().current('dashboard'))}>Dashboard</Link>
+                            <Link href={route('tickets.index')} className={item(route().current('tickets.index'))}>Tickets</Link>
+                            <Link
+                                href={route('tickets.create')}
+                                className="block rounded-2xl bg-white px-4 py-3 text-center text-sm font-extrabold text-pink-600"
+                            >
+                                ＋ New Ticket
+                            </Link>
+                            <Link
+                                href={route('logout')}
+                                method="post"
+                                as="button"
+                                className="w-full rounded-2xl bg-white/20 px-4 py-3 text-sm font-bold"
+                            >
+                                Logout
+                            </Link>
+                        </div>
+                    )}
+                </div>
 
-            <FlashMessage />
+                <FlashMessage />
 
-            <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6">{children}</main>
+                <main className="mx-auto max-w-5xl px-4 py-6 sm:px-8 sm:py-10">
+                    {header && <div className="mb-6">{header}</div>}
+                    {children}
+                </main>
+            </div>
         </div>
     );
 }
